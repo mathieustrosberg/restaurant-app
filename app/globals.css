@@ -80,9 +80,17 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
+  
+  html,
   body {
-    @apply bg-background text-foreground;
+    height: 100%;
+    font-family: "Neue Montreal", sans-serif;
+    font-size: clamp(0.8rem, 1.2vw, 0.9rem);
+    background-color: white;
+    color: #1a1a1a;
   }
 }
