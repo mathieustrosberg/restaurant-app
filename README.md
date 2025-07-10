@@ -1,36 +1,243 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍽️ Restaurant App - Système de Gestion
 
-## Getting Started
+Une application web moderne pour la gestion complète d'un restaurant, développée avec Next.js 15, TypeScript, et MongoDB.
 
-First, run the development server:
+## ✨ Fonctionnalités
 
+### 🏠 Site Web Public
+- **Page d'accueil** responsive avec sections dynamiques
+- **Hero Section** configurable avec titre et sous-titre
+- **Bannière d'information** éditable
+- **Section menu** avec gestion par catégories (Entrées, Plats, Desserts)
+- **Section image highlight** avec couleurs personnalisables
+- **Design moderne** avec animations GSAP et Tailwind CSS
+
+### 🔐 Dashboard Admin
+- **Authentification sécurisée** avec Better Auth
+- **Gestion de contenu** en temps réel
+- **Éditeur de menu** par catégories avec ajout/modification/suppression
+- **Gestionnaire de newsletter** (interface préparée)
+- **Interface moderne** avec shadcn/ui components
+- **Navigation intuitive** avec sidebar responsive
+
+### 🛠️ Technologies
+
+**Frontend:**
+- Next.js 15 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- shadcn/ui components
+- GSAP animations
+- Lucide React icons
+
+**Backend:**
+- Next.js API Routes
+- Better Auth pour l'authentification
+- MongoDB avec adaptateur natif
+- Validation avec Zod
+
+**DevTools:**
+- ESLint configuration
+- TypeScript strict mode
+- Turbopack pour le développement
+
+## 🚀 Installation
+
+### Prérequis
+- Node.js 18+ 
+- MongoDB (local ou Atlas)
+- npm ou yarn
+
+### Configuration
+
+1. **Cloner le projet**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd restaurant-app
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Installer les dépendances**
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Variables d'environnement**
+Créer un fichier `.env.local` :
+```env
+# MongoDB
+MONGODB_URI=mongodb://localhost:27017/restaurant_app
+MONGODB_DB=restaurant_app
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Better Auth
+BETTER_AUTH_SECRET=your-secret-key-here
+BETTER_AUTH_URL=http://localhost:3000
 
-## Learn More
+# Admin par défaut
+ADMIN_EMAIL=admin@loon-garden.com
+ADMIN_PASSWORD=your-secure-password
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. **Initialiser la base de données**
+```bash
+# Créer l'utilisateur admin
+npm run create-admin
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Initialiser le contenu par défaut
+npm run init-content
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5. **Lancer le serveur de développement**
+```bash
+npm run dev
+```
 
-## Deploy on Vercel
+L'application sera accessible sur [http://localhost:3000](http://localhost:3000)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📁 Structure du Projet
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+restaurant-app/
+├── app/                    # App Router Next.js
+│   ├── api/               # Routes API
+│   │   ├── auth/          # Authentification
+│   │   └── content/       # Gestion du contenu
+│   ├── dashboard/         # Interface admin
+│   ├── login/            # Page de connexion
+│   └── page.tsx          # Page d'accueil
+├── components/            # Composants React
+│   ├── dashboard/        # Composants du dashboard
+│   ├── ui/              # Composants UI de base
+│   └── [sections]/      # Sections de la page d'accueil
+├── lib/                  # Utilitaires et configuration
+│   ├── hooks/           # Hooks React personnalisés
+│   ├── auth.ts          # Configuration Better Auth
+│   ├── content.ts       # Types et fonctions MongoDB
+│   └── utils.ts         # Utilitaires généraux
+├── scripts/              # Scripts d'initialisation
+├── public/              # Assets statiques
+└── middleware.ts        # Middleware d'authentification
+```
+
+## 🔧 Scripts Disponibles
+
+```bash
+# Développement avec Turbopack
+npm run dev
+
+# Build de production
+npm run build
+
+# Démarrer en production
+npm run start
+
+# Linting
+npm run lint
+
+# Créer un utilisateur admin
+npm run create-admin
+
+# Initialiser le contenu par défaut
+npm run init-content
+```
+
+## 💾 Base de Données
+
+### Collections MongoDB
+
+**pageContent** - Contenu dynamique des pages
+```typescript
+{
+  heroSection: {
+    title: string
+    subtitle: string
+    highlightText: string
+  }
+  infoBanner: {
+    text: string
+  }
+  imageHighlight: {
+    mainColor: string
+    overlayColor: string
+    opacity: number
+  }
+  menuSection: {
+    title: string
+    subtitle: string
+    highlightText: string
+    description: string
+    items: MenuItem[]
+  }
+}
+```
+
+**users** - Utilisateurs (géré par Better Auth)
+
+**sessions** - Sessions (géré par Better Auth)
+
+## 🔐 Authentification
+
+Le système utilise Better Auth avec :
+- Authentification par email/mot de passe
+- Sessions sécurisées avec cookies
+- Middleware de protection pour `/dashboard`
+- Accès admin restreint à `admin@loon-garden.com`
+
+## 🎨 Personnalisation
+
+### Thème et Couleurs
+Les couleurs sont configurables via :
+- Tailwind CSS classes
+- Variables CSS custom
+- Interface d'administration pour les sections
+
+### Contenu
+Tout le contenu est modifiable via le dashboard :
+- Textes et titres
+- Menu et plats
+- Couleurs et styles
+- Images highlight
+
+## 🚢 Déploiement
+
+### Vercel (Recommandé)
+1. Connecter le repository GitHub
+2. Configurer les variables d'environnement
+3. Déployer automatiquement
+
+### Docker
+```bash
+# Build de l'image
+docker build -t restaurant-app .
+
+# Lancer avec docker-compose
+docker-compose up -d
+```
+
+## 🤝 Contribution
+
+1. Fork du projet
+2. Créer une branche feature (`git checkout -b feature/amazing-feature`)
+3. Commit des changements (`git commit -m 'Add some amazing feature'`)
+4. Push sur la branche (`git push origin feature/amazing-feature`)
+5. Ouvrir une Pull Request
+
+## 📝 Licence
+
+Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+## 🆘 Support
+
+Pour toute question ou problème :
+- Ouvrir une issue sur GitHub
+- Consulter la documentation des technologies utilisées
+- Vérifier la configuration des variables d'environnement
+
+## 🔮 Roadmap
+
+- [ ] Système de réservations
+- [ ] Intégration service email pour newsletter
+- [ ] Gestion des commandes en ligne
+- [ ] Statistiques avancées
+- [ ] Mode multi-restaurant
+- [ ] API publique pour intégrations tierces

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useContent } from '@/lib/hooks/useContent'
 
 // Catégories affichées dans la barre de filtres
 const CATEGORIES = [
@@ -10,63 +11,57 @@ const CATEGORIES = [
   { key: "dessert", label: "Desserts" },
 ];
 
-// Items du menu (désormais avec description et prix)
-const ITEMS = [
-  {
-    name: "Tapenade Provençale",
-    category: "entree",
-    description: "Olives, câpres et anchois finement mixés, servis avec croûtons.",
-    price: "8€",
-  },
-  {
-    name: "Velouté de courge",
-    category: "entree",
-    description: "Crémeux de courge musquée, crème fraîche et noisettes torréfiées.",
-    price: "9€",
-  },
-  {
-    name: "Steak‑frites",
-    category: "plat",
-    description: "Pièce de bœuf française, frites maison et sauce béarnaise.",
-    price: "22€",
-  },
-  {
-    name: "Filet de bar rôti",
-    category: "plat",
-    description: "Filet de bar, purée de panais et beurre blanc citronné.",
-    price: "24€",
-  },
-  {
-    name: "Tarte Tatin",
-    category: "dessert",
-    description: "Pommes caramélisées, pâte feuilletée et crème fraîche épaisse.",
-    price: "7€",
-  },
-  {
-    name: "Mousse au chocolat",
-    category: "dessert",
-    description: "Chocolat noir 70 %, pointe de fleur de sel.",
-    price: "6€",
-  },
-];
-
 export default function MenuSection() {
   const [active, setActive] = useState("all");
+  const { content, loading } = useContent()
+
+  if (loading) {
+    return (
+      <section className="md:py-50 px-12">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-300 rounded w-80 mb-4"></div>
+          <div className="h-4 bg-gray-300 rounded w-full max-w-2xl mb-2"></div>
+          <div className="h-4 bg-gray-300 rounded w-full max-w-xl mb-10"></div>
+          
+          <div className="flex gap-2 mb-6">
+            {CATEGORIES.map((_, idx) => (
+              <div key={idx} className="h-10 bg-gray-300 rounded-full w-20"></div>
+            ))}
+          </div>
+          
+          <div className="space-y-4">
+            {[1,2,3].map((idx) => (
+              <div key={idx} className="py-4">
+                <div className="h-6 bg-gray-300 rounded w-48 mb-2"></div>
+                <div className="h-4 bg-gray-300 rounded w-full max-w-md"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  const menuData = content?.menuSection || {
+    title: "Découvrez ",
+    subtitle: "",
+    highlightText: "notre menu.",
+    description: "Laissez-vous guider par nos suggestions, des entrées délicates aux grillades d'exception.\nPour nos jeunes gourmets, nous avons imaginé un menu tout en finesse, qui se conclut par une jolie surprise.",
+    items: []
+  }
 
   const filteredItems =
-    active === "all" ? ITEMS : ITEMS.filter((item) => item.category === active);
+    active === "all" ? menuData.items : menuData.items.filter((item) => item.category === active);
 
   return (
     <section className="md:py-50 px-12">
       <h1 className="text-4xl font-neue font-normal mb-4">
-        Découvrez <span className="font-editorial">notre menu.</span>
+        {menuData.title}
+        {menuData.subtitle && <span>{menuData.subtitle}</span>}
+        <span className="font-editorial">{menuData.highlightText}</span>
       </h1>
-      <p className="text-base mb-10">
-        Laissez-vous guider par nos suggestions, des entrées délicates aux
-        grillades d'exception.
-        <br />
-        Pour nos jeunes gourmets, nous avons imaginé un menu tout en finesse,
-        qui se conclut par une jolie surprise.
+      <p className="text-base mb-10 whitespace-pre-line">
+        {menuData.description}
       </p>
 
       {/* Boutons de filtre */}
@@ -100,16 +95,21 @@ export default function MenuSection() {
             className="filter-list__item py-4"
           >
             <div className="flex flex-col justify-between sm:flex-row sm:items-center sm:gap-4">
-<div className="flex flex-col">
-    <h2 className="text-2xl font-medium">{item.name}</h2>
-    <p className="text-base/5">{item.description}</p>
-</div>
+              <div className="flex flex-col">
+                <h2 className="text-2xl font-medium">{item.name}</h2>
+                <p className="text-base/5">{item.description}</p>
+              </div>
               <span className="text-lg font-medium sm:w-1/6 w-full sm:text-right mt-2 sm:mt-0">
                 {item.price}
               </span>
             </div>
           </div>
         ))}
+        {filteredItems.length === 0 && (
+          <div className="py-8 text-center text-gray-500">
+            <p>Aucun plat trouvé dans cette catégorie.</p>
+          </div>
+        )}
       </div>
     </section>
   );
