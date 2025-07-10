@@ -2,6 +2,7 @@
 
 import { createAuthClient } from "better-auth/react"
 import { redirect } from "next/navigation"
+import ContentEditor from "@/components/dashboard/content-editor"
 
 const { useSession, signOut } = createAuthClient()
 
@@ -33,29 +34,39 @@ export default function DashboardPage() {
   }
 
   return (
-    <main style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "30px" }}>
-        <h1>Tableau de bord</h1>
-        <button 
-          onClick={handleLogout}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#dc3545",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            fontSize: "14px"
-          }}
-        >
-          Déconnexion
-        </button>
-      </div>
-      
-      <div style={{ backgroundColor: "#f8f9fa", padding: "20px", borderRadius: "8px" }}>
-        <p>Bienvenue, <strong>{session?.user.email}</strong> ! (Admin)</p>
-        <p>Vous êtes connecté au tableau de bord administrateur.</p>
-      </div>
-    </main>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header du dashboard */}
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <h1 className="text-xl font-semibold text-gray-900">
+                Tableau de bord - Loon Garden
+              </h1>
+            </div>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-700">
+                Connecté en tant que <strong>{session?.user.email}</strong>
+              </span>
+              <button 
+                onClick={handleLogout}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                Déconnexion
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Contenu principal */}
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="px-4 py-6 sm:px-0">
+          <div className="bg-white rounded-lg shadow">
+            <ContentEditor />
+          </div>
+        </div>
+      </main>
+    </div>
   )
 }
