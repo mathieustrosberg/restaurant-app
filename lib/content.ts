@@ -51,9 +51,14 @@ export async function updatePageContent(content: Omit<PageContent, '_id' | 'upda
   try {
     await client.connect()
     const collection = db.collection<PageContent>('pageContent')
-    const result = await collection.replaceOne(
+    const result = await collection.updateOne(
       {},
-      { ...content, updatedAt: new Date() },
+      { 
+        $set: { 
+          ...content, 
+          updatedAt: new Date() 
+        } 
+      },
       { upsert: true }
     )
     return result.acknowledged

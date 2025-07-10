@@ -1,13 +1,21 @@
 "use client"
 
+import { useState } from "react"
 import { createAuthClient } from "better-auth/react"
 import { redirect } from "next/navigation"
+import { SidebarProvider } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/dashboard/app-sidebar"
+import { Header } from "@/components/dashboard/header"
+import { Overview } from "@/components/dashboard/overview"
 import ContentEditor from "@/components/dashboard/content-editor"
+import NewsletterManager from "@/components/dashboard/newsletter-manager"
+import MenuManager from "@/components/dashboard/menu-manager"
 
 const { useSession, signOut } = createAuthClient()
 
 export default function DashboardPage() {
   const { data: session, isPending } = useSession()
+  const [activeSection, setActiveSection] = useState("accueil")
 
   // Redirection si pas de session (côté client)
   if (!isPending && (!session || session.user.email !== "admin@loon-garden.com")) {
@@ -17,9 +25,12 @@ export default function DashboardPage() {
   // Affichage loading pendant le chargement
   if (isPending) {
     return (
-      <main style={{ padding: "20px", textAlign: "center" }}>
-        <p>Chargement...</p>
-      </main>
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-lg">Chargement...</p>
+        </div>
+      </div>
     )
   }
 
@@ -27,46 +38,74 @@ export default function DashboardPage() {
     await signOut({
       fetchOptions: {
         onSuccess: () => {
-          window.location.href = "/login" // Redirection après déconnexion
+          window.location.href = "/login"
         }
       }
     })
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header du dashboard */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">
-                Tableau de bord - Loon Garden
-              </h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">
-                Connecté en tant que <strong>{session?.user.email}</strong>
-              </span>
-              <button 
-                onClick={handleLogout}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-              >
-                Déconnexion
-              </button>
+  const renderContent = () => {
+    switch (activeSection) {
+      case "accueil":
+        return <Overview />
+      case "contenu":
+        return <ContentEditor />
+      case "menu":
+        return <MenuManager />
+      case "newsletter":
+        return <NewsletterManager />
+      case "réservations":
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">Réservations</h2>
+            <p className="text-muted-foreground">Gestion des réservations et disponibilités.</p>
+            <div className="mt-4 p-4 border border-dashed border-gray-300 rounded-lg text-center">
+              <p className="text-sm text-muted-foreground">Fonctionnalité à venir</p>
             </div>
           </div>
-        </div>
-      </header>
+        )
+      case "statistiques":
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">Statistiques</h2>
+            <p className="text-muted-foreground">Analyse des performances et données du restaurant.</p>
+            <div className="mt-4 p-4 border border-dashed border-gray-300 rounded-lg text-center">
+              <p className="text-sm text-muted-foreground">Fonctionnalité à venir</p>
+            </div>
+          </div>
+        )
+      case "paramètres":
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">Paramètres</h2>
+            <p className="text-muted-foreground">Configuration générale de l'application.</p>
+            <div className="mt-4 p-4 border border-dashed border-gray-300 rounded-lg text-center">
+              <p className="text-sm text-muted-foreground">Fonctionnalité à venir</p>
+            </div>
+          </div>
+        )
+      default:
+        return <Overview />
+    }
+  }
 
-      {/* Contenu principal */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="bg-white rounded-lg shadow">
-            <ContentEditor />
-          </div>
+  return (
+    <SidebarProvider>
+      <div className="flex h-screen w-full">
+        <AppSidebar 
+          activeSection={activeSection}
+          onSectionChange={setActiveSection}
+        />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <Header 
+            user={session?.user}
+            onLogout={handleLogout}
+          />
+          <main className="flex-1 overflow-auto p-6">
+            {renderContent()}
+          </main>
         </div>
-      </main>
-    </div>
+      </div>
+    </SidebarProvider>
   )
 }
