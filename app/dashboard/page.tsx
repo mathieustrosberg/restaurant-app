@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +27,8 @@ import {
   Clock,
   Plus,
   Home,
-  Menu as MenuIcon
+  Menu as MenuIcon,
+  LogOut
 } from "lucide-react";
 
 type Service = "lunch" | "dinner";
@@ -90,6 +93,7 @@ const items = [
 
 export default function DashboardPage() {
   /* ===== States ===== */
+  const router = useRouter();
   const [activeSection, setActiveSection] = useState("content");
   const [siteTitle, setSiteTitle] = useState("Mon Restaurant");
   const [siteIntro, setSiteIntro] = useState("Bienvenue dans notre restaurant");
@@ -111,6 +115,14 @@ export default function DashboardPage() {
   const [responseText, setResponseText] = useState("");
 
   /* ===== Functions ===== */
+  async function handleLogout() {
+    try {
+      await authClient.signOut();
+      router.push('/login');
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    }
+  }
   const loadContent = useCallback(async (): Promise<void> => {
     const res = await fetch("/api/content/home", { cache: "no-store" });
     if (!res.ok) return;
@@ -342,10 +354,14 @@ export default function DashboardPage() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <div className="p-4">
+        <div className="p-4 space-y-2">
           <Button variant="outline" size="sm" className="w-full" onClick={() => window.open('/', '_blank')}>
             <Home className="w-4 h-4 mr-2" />
             Voir le site
+          </Button>
+          <Button variant="outline" size="sm" className="w-full" onClick={handleLogout}>
+            <LogOut className="w-4 h-4 mr-2" />
+            Se déconnecter
           </Button>
         </div>
       </SidebarFooter>
