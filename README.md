@@ -9,7 +9,8 @@ Application web moderne pour la gestion d'un restaurant, développée avec Next.
 - **Système de réservation** en ligne
 - **Newsletter** pour les clients
 - **Contact** et support client
-- **Dashboard administrateur** pour la gestion
+- **🔐 Système d'authentification** avec NextAuth.js
+- **Dashboard administrateur** protégé pour la gestion
 - **Politique de cookies** et mentions légales
 - **Architecture Docker** pour le déploiement
 
@@ -17,6 +18,7 @@ Application web moderne pour la gestion d'un restaurant, développée avec Next.
 
 - **Frontend**: Next.js 15, React 19, TypeScript
 - **Styling**: Tailwind CSS, Radix UI
+- **Authentification**: NextAuth.js v5
 - **Base de données**: MySQL (Prisma) + MongoDB (Mongoose)
 - **Déploiement**: Docker, Docker Compose
 - **Outils**: ESLint, Prettier
@@ -76,6 +78,39 @@ npm run dev
 ```
 
 L'application sera accessible sur [http://localhost:3000](http://localhost:3000)
+
+### 6. Créer un compte administrateur (optionnel)
+
+```bash
+# Utiliser le script pour créer un administrateur
+node scripts/create-admin.js
+```
+
+## 🔐 Authentification
+
+Le système d'authentification est basé sur **NextAuth.js v5** et protège l'accès au dashboard administrateur.
+
+### Comptes de test
+
+Pour tester l'application, vous pouvez utiliser les identifiants suivants :
+
+**👤 Administrateur**
+- **Email** : `admin@restaurant.com`
+- **Mot de passe** : `Admin123!`
+
+### Pages protégées
+
+- `/dashboard` - Interface d'administration (authentification requise)
+- `/login` - Page de connexion
+
+### Configuration
+
+L'authentification nécessite les variables d'environnement suivantes :
+
+```env
+NEXTAUTH_SECRET="your-secret-key-here"
+NEXTAUTH_URL="http://localhost:3000"
+```
 
 ## 🐳 Déploiement avec Docker
 
@@ -157,10 +192,12 @@ npm run prisma:generate  # Générer le client Prisma
 - Page de contact avec informations
 
 ### Administration
-- Dashboard pour gérer les réservations
+- Dashboard protégé par authentification
+- Gestion des réservations
 - Gestion du contenu dynamique
 - Système d'upload d'images
 - Gestion des paramètres du site
+- Interface de connexion sécurisée
 
 ### Conformité
 - Politique de cookies conforme RGPD
