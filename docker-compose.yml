@@ -1,0 +1,52 @@
+services:
+  web:
+    build: .
+    container_name: web
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      # IMPORTANT : connexions vers les services Compose
+      DATABASE_URL: mysql://app:app@mysql:3306/appdb
+      MONGODB_URI: mongodb://mongo:27017/restaurant
+    volumes:
+      - uploads_data:/app/public/uploads
+    depends_on:
+      - mysql
+      - mongo
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: appdb
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  mongo:
+    image: mongo:6
+    container_name: mongo
+    restart: unless-stopped
+    command: ["mongod", "--wiredTigerCacheSizeGB", "0.25"]
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mysql_data:
+  mongo_data:
+  uploads_data:
+
+
