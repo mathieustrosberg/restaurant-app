@@ -204,10 +204,6 @@ npm run prisma:generate  # Générer le client Prisma
 - Mentions légales complètes
 - Politique de confidentialité
 
-## 📞 Support
-
-Pour toute question ou problème, n'hésitez pas à ouvrir une issue sur le repository GitHub.
-
 ## 📄 Licence
 
 Ce projet est développé dans le cadre du Bachelor CNDT.
