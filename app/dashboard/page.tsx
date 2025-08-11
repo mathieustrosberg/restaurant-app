@@ -33,9 +33,12 @@ import {
 
 type Service = "lunch" | "dinner";
 
+type ReservationStatus = "PENDING" | "CONFIRMED" | "CANCELED";
+
 type Reservation = {
   id: number; name: string; email: string; phone: string;
   date: string; time: string; service: Service; people: number; notes?: string;
+  status: ReservationStatus;
 };
 
 type Subscriber = { id: number; email: string };
@@ -185,6 +188,36 @@ export default function DashboardPage() {
     if (res.ok) setReservations(await res.json());
   }
 
+  async function updateReservationStatus(id: number, status: ReservationStatus): Promise<void> {
+    try {
+      const res = await fetch(`/api/reservations/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+
+      if (res.ok) {
+        loadReservations();
+      }
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de la réservation:", error);
+    }
+  }
+
+  async function deleteReservation(id: number): Promise<void> {
+    try {
+      const res = await fetch(`/api/reservations/${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        loadReservations();
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la réservation:", error);
+    }
+  }
+
   async function loadSubscribers(): Promise<void> {
     const res = await fetch("/api/newsletter", { cache: "no-store" });
     if (res.ok) setSubscribers(await res.json());
@@ -320,6 +353,19 @@ export default function DashboardPage() {
         return <Badge variant="secondary"><Eye className="w-3 h-3 mr-1" />Lu</Badge>;
       case "REPLIED":
         return <Badge variant="default" className="bg-green-500"><CheckCircle2 className="w-3 h-3 mr-1" />Répondu</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  const getReservationStatusBadge = (status: ReservationStatus) => {
+    switch (status) {
+      case "PENDING":
+        return <Badge variant="default" className="bg-yellow-500"><Clock className="w-3 h-3 mr-1" />En attente</Badge>;
+      case "CONFIRMED":
+        return <Badge variant="default" className="bg-green-500"><CheckCircle2 className="w-3 h-3 mr-1" />Confirmée</Badge>;
+      case "CANCELED":
+        return <Badge variant="destructive"><Trash2 className="w-3 h-3 mr-1" />Annulée</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -599,56 +645,250 @@ export default function DashboardPage() {
               <p className="text-muted-foreground">Gérez les réservations de votre restaurant</p>
             </div>
 
-            <Card>
-              <CardContent className="pt-6">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Client</TableHead>
-                      <TableHead>Contact</TableHead>
-                      <TableHead>Date & Heure</TableHead>
-                      <TableHead>Service</TableHead>
-                      <TableHead>Personnes</TableHead>
-                      <TableHead>Notes</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {reservations.length === 0 ? (
+            {/* Vue Desktop - Tableau */}
+            <div className="hidden lg:block">
+              <Card>
+                <CardContent className="pt-6">
+                  <Table>
+                    <TableHeader>
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center text-muted-foreground">
-                          Aucune réservation
-                        </TableCell>
+                        <TableHead>Client</TableHead>
+                        <TableHead>Contact</TableHead>
+                        <TableHead>Date & Heure</TableHead>
+                        <TableHead>Service</TableHead>
+                        <TableHead>Personnes</TableHead>
+                        <TableHead>Statut</TableHead>
+                        <TableHead>Notes</TableHead>
+                        <TableHead className="w-[200px]">Actions</TableHead>
                       </TableRow>
-                    ) : (
-                      reservations.map((res) => (
-                        <TableRow key={res.id}>
-                          <TableCell className="font-medium">{res.name}</TableCell>
-                          <TableCell>
-                            <div className="text-sm">
-                              <div>{res.email}</div>
-                              <div className="text-muted-foreground">{res.phone}</div>
-                            </div>
+                    </TableHeader>
+                    <TableBody>
+                      {reservations.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={8} className="text-center text-muted-foreground">
+                            Aucune réservation
                           </TableCell>
-                          <TableCell>
-                            <div className="text-sm">
+                        </TableRow>
+                      ) : (
+                        reservations.map((res) => (
+                          <TableRow key={res.id}>
+                            <TableCell className="font-medium">{res.name}</TableCell>
+                            <TableCell>
+                              <div className="text-sm">
+                                <div>{res.email}</div>
+                                <div className="text-muted-foreground">{res.phone}</div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="text-sm">
+                                <div>{new Date(res.date).toLocaleDateString('fr-FR')}</div>
+                                <div className="text-muted-foreground">{res.time}</div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant={res.service === "lunch" ? "default" : "secondary"}>
+                                {res.service === "lunch" ? "Déjeuner" : "Dîner"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>{res.people}</TableCell>
+                            <TableCell>
+                              {getReservationStatusBadge(res.status)}
+                            </TableCell>
+                            <TableCell className="max-w-[150px] truncate">{res.notes || "-"}</TableCell>
+                            <TableCell>
+                              <div className="flex gap-2">
+                                {res.status === "PENDING" && (
+                                  <>
+                                    <Button
+                                      size="sm"
+                                      variant="default"
+                                      className="bg-green-600 hover:bg-green-700"
+                                      onClick={() => updateReservationStatus(res.id, "CONFIRMED")}
+                                    >
+                                      <CheckCircle2 className="w-4 h-4" />
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="destructive"
+                                      onClick={() => updateReservationStatus(res.id, "CANCELED")}
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                  </>
+                                )}
+                                {res.status === "CONFIRMED" && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => updateReservationStatus(res.id, "CANCELED")}
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                )}
+                                {res.status === "CANCELED" && (
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button size="sm" variant="outline">
+                                        <Trash2 className="w-4 h-4" />
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>Supprimer cette réservation ?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          Cette action est irréversible. La réservation sera définitivement supprimée.
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                        <AlertDialogAction onClick={() => deleteReservation(res.id)}>
+                                          Supprimer
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Vue Mobile/Tablet - Cartes */}
+            <div className="lg:hidden space-y-4">
+              {reservations.length === 0 ? (
+                <Card>
+                  <CardContent className="pt-6 text-center text-muted-foreground">
+                    Aucune réservation
+                  </CardContent>
+                </Card>
+              ) : (
+                reservations.map((res) => (
+                  <Card key={res.id} className="overflow-hidden">
+                    <CardContent className="p-4 space-y-4">
+                      {/* En-tête avec nom et statut */}
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h3 className="font-semibold text-lg">{res.name}</h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant={res.service === "lunch" ? "default" : "secondary"} className="text-xs">
+                              {res.service === "lunch" ? "Déjeuner" : "Dîner"}
+                            </Badge>
+                            <span className="text-sm text-muted-foreground">•</span>
+                            <span className="text-sm text-muted-foreground">{res.people} pers.</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-2">
+                          {getReservationStatusBadge(res.status)}
+                        </div>
+                      </div>
+
+                      <Separator />
+
+                      {/* Informations principales */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <div className="text-sm">
+                            <span className="font-medium text-muted-foreground">Date & Heure :</span>
+                            <div className="mt-1">
                               <div>{new Date(res.date).toLocaleDateString('fr-FR')}</div>
                               <div className="text-muted-foreground">{res.time}</div>
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant={res.service === "lunch" ? "default" : "secondary"}>
-                              {res.service === "lunch" ? "Déjeuner" : "Dîner"}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>{res.people}</TableCell>
-                          <TableCell className="max-w-[200px] truncate">{res.notes || "-"}</TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <div className="text-sm">
+                            <span className="font-medium text-muted-foreground">Contact :</span>
+                            <div className="mt-1">
+                              <div>{res.email}</div>
+                              <div className="text-muted-foreground">{res.phone}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Notes */}
+                      {res.notes && (
+                        <div className="text-sm">
+                          <span className="font-medium text-muted-foreground">Notes :</span>
+                          <div className="mt-1 p-2 bg-muted rounded-md text-sm">
+                            {res.notes}
+                          </div>
+                        </div>
+                      )}
+
+                      <Separator />
+
+                      {/* Actions */}
+                      <div className="flex flex-wrap gap-2 justify-end">
+                        {res.status === "PENDING" && (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="default"
+                              className="bg-green-600 hover:bg-green-700 flex-1 sm:flex-none"
+                              onClick={() => updateReservationStatus(res.id, "CONFIRMED")}
+                            >
+                              <CheckCircle2 className="w-4 h-4 mr-2" />
+                              Confirmer
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              className="flex-1 sm:flex-none"
+                              onClick={() => updateReservationStatus(res.id, "CANCELED")}
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Refuser
+                            </Button>
+                          </>
+                        )}
+                        {res.status === "CONFIRMED" && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateReservationStatus(res.id, "CANCELED")}
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Annuler
+                          </Button>
+                        )}
+                        {res.status === "CANCELED" && (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button size="sm" variant="outline">
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Supprimer
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Supprimer cette réservation ?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Cette action est irréversible. La réservation sera définitivement supprimée.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => deleteReservation(res.id)}>
+                                  Supprimer
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
           </div>
         );
 

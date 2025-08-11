@@ -18,6 +18,7 @@ export async function GET() {
     service: r.service,
     people: r.people,
     notes: r.notes || undefined,
+    status: r.status,
   }));
   return NextResponse.json(formatted);
 }
