@@ -9,7 +9,7 @@ Application web moderne pour la gestion d'un restaurant, développée avec Next.
 - **Système de réservation** en ligne
 - **Newsletter** pour les clients
 - **Contact** et support client
-- **Système d'authentification** avec NextAuth.js
+- **Système d'authentification** avec BetterAuth.js
 - **Dashboard administrateur** protégé pour la gestion
 - **Politique de cookies** et mentions légales
 - **Architecture Docker** pour le déploiement
