@@ -73,7 +73,7 @@ const HomePage = () => {
             <div className="space-y-6">
               <Badge variant="secondary" className="bg-orange-100 text-orange-800 hover:bg-orange-200">
                 <UtensilsCrossed className="w-4 h-4 mr-2" />
-                Restaurant Gastronomique
+                Restaurant Brasserie
               </Badge>
               <h1 className="text-4xl md:text-6xl font-bold leading-tight">
                 {titleSection?.value?.text || "Mon Restaurant"}

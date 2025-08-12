@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const metadata = {
   title: "Mentions légales",
   description: "Informations légales du site du restaurant",
@@ -5,7 +7,15 @@ export const metadata = {
 
 export default function MentionsLegalesPage() {
   return (
-    <main className="max-w-3xl mx-auto px-4 py-10 prose prose-slate">
+    <main className="max-w-3xl mx-auto px-4 py-10 prose prose-slate flex-1">
+      <div className="mb-6">
+        <Link 
+          href="/" 
+          className="inline-flex items-center text-blue-600 hover:text-blue-800 no-underline"
+        >
+          ← Retour à l'accueil
+        </Link>
+      </div>
       <h1>Mentions légales</h1>
       <p>
         Conformément aux dispositions de la loi n°2004-575 du 21 juin 2004 pour la confiance dans l&apos;économie numérique.

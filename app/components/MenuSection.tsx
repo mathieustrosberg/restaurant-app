@@ -69,7 +69,7 @@ export default function MenuSection() {
           <UtensilsCrossed className="w-6 h-6 text-orange-600" />
           <CardTitle className="text-2xl">Notre Menu</CardTitle>
         </div>
-        <CardDescription>
+        <CardDescription className="pt-3 pb-6">
           Découvrez nos spécialités culinaires préparées avec passion
         </CardDescription>
       </CardHeader>

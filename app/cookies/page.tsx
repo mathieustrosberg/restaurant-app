@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const metadata = {
   title: "Cookies",
   description: "Informations sur les cookies utilisés par le site",
@@ -5,7 +7,15 @@ export const metadata = {
 
 export default function CookiesPage() {
   return (
-    <main className="max-w-3xl mx-auto px-4 py-10 prose prose-slate">
+    <main className="max-w-3xl mx-auto px-4 py-10 prose prose-slate flex-1">
+      <div className="mb-6">
+        <Link 
+          href="/" 
+          className="inline-flex items-center text-blue-600 hover:text-blue-800 no-underline"
+        >
+          ← Retour à l'accueil
+        </Link>
+      </div>
       <h1>Cookies</h1>
       <p>
         Nous utilisons des cookies pour assurer le bon fonctionnement du site et, avec votre consentement, pour mesurer de manière anonyme l’audience.

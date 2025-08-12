@@ -11,7 +11,7 @@ import { CalendarDays, Clock, Users, CheckCircle, Phone, Mail, User } from 'luci
 type Service = "lunch" | "dinner";
 
 const LUNCH_SLOTS = ["11:45","12:00","12:15","12:30","12:45","13:00","13:15","13:30"];
-const DINNER_SLOTS = ["18:45","19:00","19:15","19:30","19:45","20:00","20:15","20:30"];
+const DINNER_SLOTS = ["19:00","19:15","19:30","19:45","20:00","20:15","20:30","20:45"];
 
 export default function ReservationSection() {
   const [name, setName] = React.useState("");
@@ -74,7 +74,7 @@ export default function ReservationSection() {
           <CalendarDays className="w-6 h-6 text-orange-600" />
           <CardTitle className="text-2xl">Réservation</CardTitle>
         </div>
-        <CardDescription>
+        <CardDescription className="pt-3 pb-6">
           Réservez votre table en quelques clics. Nous vous confirmerons par email.
         </CardDescription>
       </CardHeader>

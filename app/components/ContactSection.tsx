@@ -60,7 +60,7 @@ export default function ContactSection() {
 
   return (
     <div className="p-6">
-      <CardHeader className="px-0 pt-0">
+      <CardHeader className="px-0 pt-3 pb-6">
         <div className="flex items-center gap-3">
           <MessageSquare className="w-6 h-6 text-orange-600" />
           <CardTitle className="text-2xl">Contactez-nous</CardTitle>
@@ -71,29 +71,6 @@ export default function ContactSection() {
       </CardHeader>
 
       <CardContent className="px-0 space-y-6">
-        {/* Quick Contact Info */}
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg">
-            <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-              <MessageCircle className="w-4 h-4 text-orange-600" />
-            </div>
-            <div>
-              <div className="font-medium text-sm">Réponse rapide</div>
-              <div className="text-xs text-muted-foreground">Sous 24h en moyenne</div>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg">
-            <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-              <Mail className="w-4 h-4 text-orange-600" />
-            </div>
-            <div>
-              <div className="font-medium text-sm">Support client</div>
-              <div className="text-xs text-muted-foreground">7j/7 de 9h à 21h</div>
-            </div>
-          </div>
-        </div>
-
         {message && (
           <div className={`p-4 rounded-lg border flex items-center gap-3 ${
             isSuccess 

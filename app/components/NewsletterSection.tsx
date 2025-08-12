@@ -55,7 +55,7 @@ export default function NewsletterSection() {
           </div>
           <CardTitle className="text-2xl">Newsletter</CardTitle>
         </div>
-        <CardDescription>
+        <CardDescription className="pt-3 pb-6">
           Restez informé de nos nouveautés, événements spéciaux et offres exclusives
         </CardDescription>
       </CardHeader>
@@ -66,10 +66,6 @@ export default function NewsletterSection() {
           <div className="flex items-center gap-3 text-sm">
             <div className="w-2 h-2 rounded-full bg-orange-500"></div>
             <span>Menus saisonniers en avant-première</span>
-          </div>
-          <div className="flex items-center gap-3 text-sm">
-            <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-            <span>Invitations aux événements exclusifs</span>
           </div>
           <div className="flex items-center gap-3 text-sm">
             <div className="w-2 h-2 rounded-full bg-orange-500"></div>
@@ -128,14 +124,6 @@ export default function NewsletterSection() {
             <span>Pas de spam, uniquement du contenu de qualité. Désinscription facile.</span>
           </div>
         </form>
-
-        {/* Stats Badge */}
-        <div className="pt-4 border-t">
-          <Badge variant="secondary" className="bg-orange-100 text-orange-800">
-            <Users className="w-3 h-3 mr-1" />
-            Plus de 1000 abonnés nous font confiance
-          </Badge>
-        </div>
       </CardContent>
     </div>
   );

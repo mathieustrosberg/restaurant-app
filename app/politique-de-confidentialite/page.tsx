@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const metadata = {
   title: "Politique de confidentialité",
   description: "Informations sur la protection des données personnelles (RGPD)",
@@ -5,7 +7,15 @@ export const metadata = {
 
 export default function ConfidentialitePage() {
   return (
-    <main className="max-w-3xl mx-auto px-4 py-10 prose prose-slate">
+    <main className="max-w-3xl mx-auto px-4 py-10 prose prose-slate flex-1">
+      <div className="mb-6">
+        <Link 
+          href="/" 
+          className="inline-flex items-center text-blue-600 hover:text-blue-800 no-underline"
+        >
+          ← Retour à l'accueil
+        </Link>
+      </div>
       <h1>Politique de confidentialité</h1>
       <p>
         Cette politique explique quelles données nous collectons, pourquoi, et comment vous pouvez exercer vos droits conformément au RGPD.

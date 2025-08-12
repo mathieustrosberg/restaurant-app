@@ -27,10 +27,10 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
         {children}
-        <footer className="border-t mt-10 py-6 text-sm text-gray-500">
+        <footer className="border-t mt-auto py-6 text-sm text-gray-500">
           <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row gap-2 sm:gap-4 items-start sm:items-center justify-between">
             <p>
               © {new Date().getFullYear()} Mon Restaurant. Tous droits réservés.
