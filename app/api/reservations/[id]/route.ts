@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { ReservationStatus } from "@prisma/client";
+import { sendReservationEmail } from "@/lib/email-service";
 
 export async function PUT(
   req: Request,
@@ -24,6 +25,24 @@ export async function PUT(
       data: { status },
       include: { customer: true },
     });
+
+    // Envoyer l'email de confirmation/refus si le statut change vers CONFIRMED ou CANCELED
+    if (status === "CONFIRMED" || status === "CANCELED") {
+      try {
+        await sendReservationEmail(status, {
+          customerName: reservation.customer.name,
+          customerEmail: reservation.customer.email,
+          date: reservation.date.toISOString(),
+          time: reservation.time,
+          service: reservation.service,
+          people: reservation.people,
+          notes: reservation.notes || undefined,
+        });
+      } catch (emailError) {
+        console.error("Erreur lors de l'envoi de l'email:", emailError);
+        // On continue même si l'email échoue
+      }
+    }
 
     return NextResponse.json({
       id: reservation.id,

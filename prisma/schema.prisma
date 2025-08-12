@@ -50,9 +50,10 @@ model Reservation {
 }
 
 model NewsletterSubscriber {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  createdAt DateTime @default(now())
+  id               Int      @id @default(autoincrement())
+  email            String   @unique
+  unsubscribeToken String   @unique
+  createdAt        DateTime @default(now())
 }
 
 model Contact {
