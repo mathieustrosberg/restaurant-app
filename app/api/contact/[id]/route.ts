@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendContactResponseEmail } from "@/lib/email-service";
 
 export async function PUT(request: Request) {
   try {
@@ -29,6 +30,22 @@ export async function PUT(request: Request) {
       where: { id: contactId },
       data: updateData,
     });
+
+    // Envoyer l'email de réponse si le statut change vers REPLIED et qu'il y a une réponse
+    if (status === "REPLIED" && response && response.trim()) {
+      try {
+        await sendContactResponseEmail({
+          customerName: contact.name,
+          customerEmail: contact.email,
+          originalSubject: contact.subject,
+          originalMessage: contact.message,
+          response: response.trim(),
+        });
+      } catch (emailError) {
+        console.error("Erreur lors de l'envoi de l'email de réponse:", emailError);
+        // On continue même si l'email échoue
+      }
+    }
 
     return NextResponse.json(contact);
   } catch (error: unknown) {
