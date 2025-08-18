@@ -1,7 +1,16 @@
 services:
   web:
-    build: .
+    build:
+      context: .
+      args:
+        RESEND_API_KEY: ${RESEND_API_KEY:-}
+        BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-auvsMVFfHYvxuHWF6ookRdX7JdJ68DNh}
+        BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
+        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-https://mathieustrosberg.com}
     container_name: web
+    env_file:
+      - .env.local
+      - .env
     ports:
       - "3000:3000"
     environment:
@@ -9,6 +18,7 @@ services:
       # IMPORTANT : connexions vers les services Compose
       DATABASE_URL: mysql://app:app@mysql:3306/appdb
       MONGODB_URI: mongodb://mongo:27017/restaurant
+      RESEND_API_KEY: ${RESEND_API_KEY}
     volumes:
       - uploads_data:/app/public/uploads
     depends_on:

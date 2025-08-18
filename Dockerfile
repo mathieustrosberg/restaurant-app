@@ -12,6 +12,21 @@ RUN npx prisma generate
 
 # Code source
 COPY . .
+
+# Variables d'environnement pour le build
+ARG RESEND_API_KEY
+ARG BETTER_AUTH_SECRET
+ARG BETTER_AUTH_URL
+ARG NEXT_PUBLIC_BASE_URL
+
+ENV RESEND_API_KEY=${RESEND_API_KEY}
+ENV BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+ENV BETTER_AUTH_URL=${BETTER_AUTH_URL}
+ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
+# Variables DB fictives pour le build (les vraies seront définies au runtime)
+ENV DATABASE_URL="mysql://dummy:dummy@localhost:3306/dummy"
+ENV MONGODB_URI="mongodb://localhost:27017/dummy"
+
 RUN npm run build && npm prune --production
 
 # --- Production ---
