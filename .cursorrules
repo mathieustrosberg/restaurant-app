@@ -1,0 +1,10 @@
+# .cursorrules
+
+# Inclure tous les fichiers .env dans le contexte IA
+include:
+  - .env
+  - .env.local
+  - .env.development
+  - .env.production
+  - .env.test
+  - ".env*"
