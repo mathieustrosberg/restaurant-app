@@ -23,6 +23,9 @@ const config: Config.InitialOptions = {
     '<rootDir>/node_modules/',
     '<rootDir>/tests/e2e/',
   ],
+  testMatch: [
+    '<rootDir>/tests/unit/**/*.(test|spec).(js|jsx|ts|tsx)',
+  ],
   collectCoverageFrom: [
     'app/**/*.{js,jsx,ts,tsx}',
     'components/**/*.{js,jsx,ts,tsx}',

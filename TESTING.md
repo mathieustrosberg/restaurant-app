@@ -6,15 +6,16 @@ Ce projet utilise **Jest** pour les tests unitaires et **Playwright** pour les t
 
 ```
 📁 tests/
-├── 📁 e2e/          # Tests end-to-end avec Playwright
+├── 📁 e2e/              # Tests end-to-end avec Playwright
 │   ├── homepage.spec.ts
-│   └── auth.spec.ts
-└── 📁 unit/         # Tests unitaires supplémentaires
-
-📁 __tests__/        # Tests unitaires avec Jest
-├── 📁 components/   # Tests des composants React
-├── 📁 lib/          # Tests des utilitaires
-└── 📁 hooks/        # Tests des hooks personnalisés
+│   ├── auth.spec.ts
+│   ├── contact.spec.ts
+│   ├── reservations.spec.ts
+│   └── fixtures/        # Données de test
+└── 📁 unit/            # Tests unitaires avec Jest
+    ├── 📁 components/   # Tests des composants React
+    ├── 📁 lib/          # Tests des utilitaires
+    └── 📁 hooks/        # Tests des hooks personnalisés
 ```
 
 ## Scripts Disponibles
@@ -63,7 +64,10 @@ npm run test:all
 ## Écriture de Tests
 
 ### Tests Unitaires
+Placez vos tests dans `tests/unit/` :
+
 ```typescript
+// tests/unit/components/button.test.tsx
 import { render, screen } from '@testing-library/react'
 import { Button } from '@/components/ui/button'
 
@@ -76,7 +80,10 @@ describe('Button', () => {
 ```
 
 ### Tests End-to-End
+Placez vos tests dans `tests/e2e/` :
+
 ```typescript
+// tests/e2e/homepage.spec.ts
 import { test, expect } from '@playwright/test'
 
 test('navigation fonctionne', async ({ page }) => {
