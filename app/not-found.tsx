@@ -51,13 +51,13 @@ export default function NotFound() {
             <Link href="/" className="text-orange-600 hover:text-orange-700 hover:underline">
               Accueil
             </Link>
-            <Link href="/menu" className="text-orange-600 hover:text-orange-700 hover:underline">
+            <Link href="/" className="text-orange-600 hover:text-orange-700 hover:underline">
               Notre menu
             </Link>
-            <Link href="/reservations" className="text-orange-600 hover:text-orange-700 hover:underline">
+            <Link href="/" className="text-orange-600 hover:text-orange-700 hover:underline">
               Réservations
             </Link>
-            <Link href="/contact" className="text-orange-600 hover:text-orange-700 hover:underline">
+            <Link href="/" className="text-orange-600 hover:text-orange-700 hover:underline">
               Contact
             </Link>
           </div>
