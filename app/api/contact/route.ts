@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendContactNotificationEmail } from "@/lib/email-service";
 
 export async function GET() {
   try {
@@ -15,7 +16,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const { name, email, subject, message } = await req.json();
+    const { name, email, subject, message, phone } = await req.json();
 
     // Validation
     if (!name || !email || !subject || !message) {
@@ -40,8 +41,24 @@ export async function POST(req: Request) {
         email: email.trim().toLowerCase(),
         subject: subject.trim(),
         message: message.trim(),
+        phone: phone?.trim() || null,
       },
     });
+
+    // Envoyer une notification email au restaurant
+    try {
+      await sendContactNotificationEmail({
+        customerName: contact.name,
+        customerEmail: contact.email,
+        subject: contact.subject,
+        message: contact.message,
+        phone: contact.phone || undefined,
+      });
+      console.log(`Notification de contact envoyée pour : ${contact.email}`);
+    } catch (emailError) {
+      console.error('Erreur lors de l\'envoi de la notification email:', emailError);
+      // Ne pas faire échouer la création du contact si l'email échoue
+    }
 
     return NextResponse.json(contact, { status: 201 });
   } catch (error) {

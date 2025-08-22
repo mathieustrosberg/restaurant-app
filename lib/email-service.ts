@@ -1,8 +1,9 @@
-import { resend, EMAIL_CONFIG, ReservationEmailData, ContactResponseData } from './resend';
+import { resend, EMAIL_CONFIG, ReservationEmailData, ContactResponseData, ContactNotificationData } from './resend';
 import {
   reservationConfirmedTemplate,
   reservationCanceledTemplate,
   contactResponseTemplate,
+  contactNotificationTemplate,
   newsletterWelcomeTemplate,
   unsubscribeConfirmationTemplate
 } from './email-templates';
@@ -34,6 +35,28 @@ export async function sendReservationEmail(
     return { success: true, messageId: result.data?.id };
   } catch (error) {
     console.error('Erreur lors de l\'envoi de l\'email de réservation:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Erreur inconnue' };
+  }
+}
+
+// Service d'envoi de notification de contact au restaurant
+export async function sendContactNotificationEmail(data: ContactNotificationData) {
+  try {
+    const subject = `🔔 Nouveau message de contact : ${data.subject}`;
+    const html = contactNotificationTemplate(data);
+
+    const result = await resend.emails.send({
+      from: EMAIL_CONFIG.from,
+      to: [EMAIL_CONFIG.adminEmail],
+      subject,
+      html,
+      replyTo: data.customerEmail, // Pour pouvoir répondre directement au client
+    });
+
+    console.log(`Notification de contact envoyée à ${EMAIL_CONFIG.adminEmail}:`, result);
+    return { success: true, messageId: result.data?.id };
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi de la notification de contact:', error);
     return { success: false, error: error instanceof Error ? error.message : 'Erreur inconnue' };
   }
 }

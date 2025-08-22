@@ -1,4 +1,4 @@
-import { ReservationEmailData, ContactResponseData } from './resend';
+import { ReservationEmailData, ContactResponseData, ContactNotificationData } from './resend';
 
 // Template de base pour tous les emails
 const baseTemplate = (content: string, title: string) => `
@@ -111,6 +111,44 @@ export const reservationCanceledTemplate = (data: ReservationEmailData) => {
   `;
   
   return baseTemplate(content, 'Réservation Non Disponible');
+};
+
+// Template pour notification de contact (envoyé au restaurant)
+export const contactNotificationTemplate = (data: ContactNotificationData) => {
+  const content = `
+    <div class="header">
+      <h1>🔔 Nouveau Message de Contact</h1>
+    </div>
+    <div class="content">
+      <h2>Vous avez reçu un nouveau message !</h2>
+      <p>Un client vient de vous envoyer un message depuis le site web.</p>
+      
+      <div class="info-box">
+        <h3>👤 Informations du client</h3>
+        <p><strong>Nom :</strong> ${data.customerName}</p>
+        <p><strong>Email :</strong> <a href="mailto:${data.customerEmail}">${data.customerEmail}</a></p>
+        ${data.phone ? `<p><strong>Téléphone :</strong> ${data.phone}</p>` : ''}
+      </div>
+      
+      <div class="info-box">
+        <h3>📨 Message</h3>
+        <p><strong>Sujet :</strong> ${data.subject}</p>
+        <p><strong>Message :</strong></p>
+        <p style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; font-style: italic;">${data.message}</p>
+      </div>
+      
+      <p><strong>💡 Action :</strong> Vous pouvez répondre directement à cet email pour contacter le client.</p>
+      
+      <a href="mailto:${data.customerEmail}?subject=Re: ${data.subject}" class="button">
+        📧 Répondre au client
+      </a>
+    </div>
+    <div class="footer">
+      <p>📍 Notification automatique du site web • 🌐 Restaurant</p>
+    </div>
+  `;
+  
+  return baseTemplate(content, 'Nouveau Message de Contact');
 };
 
 // Template pour réponse de contact

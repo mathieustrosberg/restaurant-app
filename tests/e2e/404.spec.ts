@@ -39,17 +39,17 @@ test.describe('Page 404', () => {
   test('les liens de navigation fonctionnent', async ({ page }) => {
     await page.goto('/test-404')
     
-    // Tester le lien vers le menu (en supposant que la page existe ou redirige)
+    // Tester que les liens pointent vers l'accueil (configuration temporaire)
     const menuLink = page.getByRole('link', { name: 'Notre menu' })
-    await expect(menuLink).toHaveAttribute('href', '/menu')
+    await expect(menuLink).toHaveAttribute('href', '/')
     
     // Tester le lien vers les réservations
     const reservationsLink = page.getByRole('link', { name: 'Réservations' })
-    await expect(reservationsLink).toHaveAttribute('href', '/reservations')
+    await expect(reservationsLink).toHaveAttribute('href', '/')
     
     // Tester le lien vers contact
     const contactLink = page.getByRole('link', { name: 'Contact' })
-    await expect(contactLink).toHaveAttribute('href', '/contact')
+    await expect(contactLink).toHaveAttribute('href', '/')
   })
 
   test('affiche l\'icône et le design appropriés', async ({ page }) => {

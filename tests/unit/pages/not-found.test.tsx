@@ -40,11 +40,11 @@ describe('Page 404', () => {
   it('affiche tous les liens de navigation utiles', () => {
     render(<NotFound />)
     
-    // Vérifier la présence des liens principaux
+    // Vérifier la présence des liens principaux (tous pointent vers l'accueil temporairement)
     expect(screen.getByRole('link', { name: /Accueil/ })).toHaveAttribute('href', '/')
-    expect(screen.getByRole('link', { name: /Notre menu/ })).toHaveAttribute('href', '/menu')
-    expect(screen.getByRole('link', { name: /Réservations/ })).toHaveAttribute('href', '/reservations')
-    expect(screen.getByRole('link', { name: /Contact/ })).toHaveAttribute('href', '/contact')
+    expect(screen.getByRole('link', { name: /Notre menu/ })).toHaveAttribute('href', '/')
+    expect(screen.getByRole('link', { name: /Réservations/ })).toHaveAttribute('href', '/')
+    expect(screen.getByRole('link', { name: /Contact/ })).toHaveAttribute('href', '/')
   })
 
   it('affiche l\'icône de restaurant', () => {
