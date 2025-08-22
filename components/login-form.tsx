@@ -24,16 +24,21 @@ export function LoginForm({ className, ...props }: LoginFormProps) {
     setError(null)
     setLoading(true)
 
-    const { error } = await authClient.signIn.email({
-      email,
-      password,
-      callbackURL: "/dashboard",
-    })
+    try {
+      const { error } = await authClient.signIn.email({
+        email,
+        password,
+        callbackURL: "/dashboard",
+      })
 
-    setLoading(false)
+      setLoading(false)
 
-    if (error) setError(error.message || "Une erreur est survenue")
-    else router.push("/dashboard")
+      if (error) setError(error.message || "Une erreur est survenue")
+      else router.push("/dashboard")
+    } catch (err) {
+      setLoading(false)
+      setError("Une erreur réseau est survenue")
+    }
   }
 
   return (
