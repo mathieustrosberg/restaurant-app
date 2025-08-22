@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "prisma:generate": "prisma generate",
+    "postinstall": "prisma generate",
+    "vercel-build": "prisma generate && prisma db push && next build",
     "create-admin": "node -r dotenv/config scripts/create-admin.js dotenv_config_path=.env.local",
     "test": "jest",
     "test:watch": "jest --watch",
