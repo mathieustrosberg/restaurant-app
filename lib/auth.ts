@@ -26,7 +26,8 @@ export function getAuth() {
       baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
       trustedOrigins: [
         "http://localhost:3000",
-        "http://localhost:3001"
+        "http://localhost:3001",
+        "https://restaurant-app-peach-nine.vercel.app"
       ],
       emailAndPassword: {
         enabled: true,
