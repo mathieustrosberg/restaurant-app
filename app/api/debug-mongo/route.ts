@@ -11,11 +11,22 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('🔄 Testing MongoDB connection...')
+    console.log('MongoDB URI format:', process.env.MONGODB_URI?.substring(0, 30) + '...')
     
-    const client = new MongoClient(process.env.MONGODB_URI || '')
+    const client = new MongoClient(process.env.MONGODB_URI || '', {
+      serverSelectionTimeoutMS: 10000, // 10 seconds timeout
+      connectTimeoutMS: 10000,
+      maxPoolSize: 1
+    })
+    
+    console.log('🔄 Attempting connection...')
     await client.connect()
     
     console.log('✅ MongoDB connected successfully')
+    
+    // Test ping
+    await client.db("admin").command({ ping: 1 })
+    console.log('✅ MongoDB ping successful')
     
     const db = client.db(process.env.MONGODB_DB || 'restaurant')
     
