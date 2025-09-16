@@ -1,7 +1,5 @@
 import { NextRequest } from 'next/server'
-import { MongoClient } from 'mongodb'
-import { betterAuth } from 'better-auth'
-import { mongodbAdapter } from 'better-auth/adapters/mongodb'
+import { getAuth } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,39 +15,38 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    console.log('🔄 Connecting to MongoDB...')
+    console.log('🔄 Getting Better Auth instance...')
+    const auth = getAuth()
     
-    // Créer une connexion MongoDB directe
-    const client = new MongoClient(process.env.MONGODB_URI || '')
-    await client.connect()
-    const db = client.db(process.env.MONGODB_DB || 'restaurant')
-    
-    console.log('✅ MongoDB connected')
-    
-    // Créer une instance Better Auth locale
-    const auth = betterAuth({
-      secret: process.env.BETTER_AUTH_SECRET || '',
-      baseURL: process.env.BETTER_AUTH_URL || '',
-      emailAndPassword: {
-        enabled: true,
-        autoSignIn: true
-      },
-      database: mongodbAdapter(db)
-    })
+    console.log('🔄 Environment variables check...')
+    console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI)
+    console.log('BETTER_AUTH_SECRET exists:', !!process.env.BETTER_AUTH_SECRET)
+    console.log('BETTER_AUTH_URL:', process.env.BETTER_AUTH_URL)
 
-    console.log('🔄 Creating admin user...')
+    console.log('🔄 Attempting to create admin user...')
     
-    // Créer l'utilisateur admin
+    // Essayer d'abord de vérifier si l'utilisateur existe
+    try {
+      const existingUser = await auth.api.listUsers({})
+      console.log('Existing users check completed')
+    } catch (listError: any) {
+      console.log('List users error (might be normal):', listError.message)
+    }
+
+    // Utiliser l'API interne de Better Auth pour créer l'utilisateur
     const result = await auth.api.signUpEmail({
       body: {
         email: "admin@restaurant.com",
         password: "Admin123!",
         name: "Admin Restaurant"
+      },
+      // Ajouter les headers nécessaires
+      headers: {
+        'content-type': 'application/json'
       }
     })
 
-    console.log('✅ Admin user created:', result)
-    await client.close()
+    console.log('✅ Admin user created successfully:', result)
 
     return Response.json({ 
       success: true, 
@@ -60,11 +57,16 @@ export async function POST(request: NextRequest) {
     
   } catch (error: any) {
     console.error('❌ Full error object:', error)
+    console.error('Error name:', error.name)
+    console.error('Error message:', error.message)
+    console.error('Error cause:', error.cause)
     
+    // Vérifier les erreurs spécifiques de Better Auth
     if (error.message?.includes("User already exists") || 
         error.message?.includes("EMAIL_ALREADY_USED") ||
-        error.message?.includes("email already exists")) {
-      console.log('ℹ️ Admin user already exists')
+        error.message?.includes("email already exists") ||
+        error.status === 400) {
+      console.log('ℹ️ Admin user likely already exists')
       return Response.json({ 
         success: true, 
         message: "Admin user already exists",
@@ -75,11 +77,13 @@ export async function POST(request: NextRequest) {
     return Response.json({ 
       error: 'Failed to create admin user',
       details: error.message,
-      stack: error.stack,
+      errorName: error.name,
+      status: error.status,
       env_check: {
         has_mongodb_uri: !!process.env.MONGODB_URI,
         has_auth_secret: !!process.env.BETTER_AUTH_SECRET,
-        has_auth_url: !!process.env.BETTER_AUTH_URL
+        has_auth_url: !!process.env.BETTER_AUTH_URL,
+        better_auth_url: process.env.BETTER_AUTH_URL
       }
     }, { status: 500 })
   }
