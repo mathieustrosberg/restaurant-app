@@ -21,14 +21,21 @@ export function getAuth() {
     
     const db = client.db(process.env.MONGODB_DB || 'restaurant')
     
+    const dynamicVercelOrigin = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined
+    const resolvedBaseURL =
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined) ||
+      process.env.BETTER_AUTH_URL ||
+      'http://localhost:3000'
+
     authInstance = betterAuth({
       secret: process.env.BETTER_AUTH_SECRET || 'fallback-secret',
-      baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
+      baseURL: resolvedBaseURL,
       trustedOrigins: [
         "http://localhost:3000",
         "http://localhost:3001",
-        "https://restaurant-app-peach-nine.vercel.app"
-      ],
+        "https://restaurant-app-peach-nine.vercel.app",
+        dynamicVercelOrigin as string
+      ].filter(Boolean) as string[],
       emailAndPassword: {
         enabled: true,
         autoSignIn: true
